@@ -12,3 +12,14 @@ spring:
       hibernate:
         show_sql: true
         highlight_sql: true
+
+jwt:
+  header: Authorization
+  secret: dGhpcyBpcyBteSBoaWRkZW4gand0IHNlY3JldCBrZXksIHdoYXQgaXMgeW91ciBqd3Qgc2VjcmV0IGtleT8=
+  access-token-validity-in-seconds: 360000
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

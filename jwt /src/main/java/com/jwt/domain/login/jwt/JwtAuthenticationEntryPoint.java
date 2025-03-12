@@ -3,8 +3,8 @@ package com.jwt.domain.login.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jwt.domain.login.dto.TokenValidationResult;
 import com.jwt.domain.login.jwt.token.TokenStatus;
-import com.jwt.web.json.ApiResponseJson;
-import com.jwt.web.json.ResponseStatusCode;
+import com.jwt.web.controller.json.ApiResponseJson;
+import com.jwt.web.controller.json.ResponseStatusCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,7 +41,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                 errorCode = ResponseStatusCode.TOKEN_VALIDATION_TRY_FAILED;
             }
         }
-        sendError(response, errorMessage, errorCode); 
+        sendError(response, errorMessage, errorCode);
     }
 
     private void sendError(HttpServletResponse response, String message, int code) throws IOException {

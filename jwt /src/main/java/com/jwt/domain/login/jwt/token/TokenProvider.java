@@ -2,6 +2,7 @@ package com.jwt.domain.login.jwt.token;
 
 import com.jwt.domain.login.dto.TokenInfo;
 import com.jwt.domain.login.dto.TokenValidationResult;
+import com.jwt.domain.login.jwt.blacklist.AccessTokenBlackList;
 import com.jwt.domain.member.Member;
 import com.jwt.domain.member.UserPrincipal;
 import io.jsonwebtoken.*;
@@ -16,11 +17,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
 
 @Slf4j
 public class TokenProvider {
@@ -31,12 +32,16 @@ public class TokenProvider {
 
     private final Key hashKey;
     private final long accessTokenValidationMilliseconds;
+    private final AccessTokenBlackList accessTokenBlackList;
 
-    public TokenProvider(String secret, long accessTokenValidationMilliseconds) {
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
+    public TokenProvider(String secrete, long accessTokenValidationInSeconds,
+                         AccessTokenBlackList accessTokenBlackList) {
+        byte[] keyBytes = Decoders.BASE64.decode(secrete);
         this.hashKey = Keys.hmacShaKeyFor(keyBytes);
-        this.accessTokenValidationMilliseconds = accessTokenValidationMilliseconds;
+        this.accessTokenValidationMilliseconds = accessTokenValidationInSeconds * 1000;
+        this.accessTokenBlackList = accessTokenBlackList;
     }
+
 
     public TokenInfo createToken(Member member) {
         long currentTime = (new Date().getTime());
@@ -101,5 +106,15 @@ public class TokenProvider {
         return new TokenValidationResult(TokenStatus.TOKEN_EXPIRED, TokenType.ACCESS,
                 claims.get(TOKEN_ID_KEY, String.class), null);
     }
+
+    public boolean isAccessTokenBlackList(String accessToken) {
+        if(accessTokenBlackList.isTokenBlackList(accessToken)) {
+            log.info("BlackListed Access Token");
+            return true;
+        }
+
+        return false;
+    }
+
 
 }

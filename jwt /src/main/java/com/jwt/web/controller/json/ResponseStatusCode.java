@@ -1,4 +1,4 @@
-package com.jwt.web.json;
+package com.jwt.web.controller.json;
 
 public class ResponseStatusCode {
 
